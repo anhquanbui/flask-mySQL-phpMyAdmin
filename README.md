@@ -14,7 +14,7 @@ This project contains a simple web application using **Flask** with a **MySQL** 
 
 Clone the repository:
 ```bash
-git clone https://github.com/anhquanbui/flask-mySQL-phpMyAdmin.git
+git clone https://github.com/anhquanbui/myapp.git
 cd myapp
 ```
 
