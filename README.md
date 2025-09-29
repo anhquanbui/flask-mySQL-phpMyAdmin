@@ -66,13 +66,8 @@ Password: superStrongPass123
 phpMyAdmin is behind an **Nginx proxy with Basic Auth**.  
 You will be prompted twice when accessing `http://localhost:8080`:  
 
-1. **Proxy Authentication** – credentials are defined in `pma-proxy/.htpasswd`.  
-   Example (already hashed inside `.htpasswd`):
-   ```
-   myadmin:$2y$05$6JPBqwFbmh18tP5z6nYOHONh3uPF6i3nC/zfEyqV38JellWFyszwa
-   ```
-
-   To generate your own username/password pair, run:
+1. **Proxy Authentication** – you must create your own `.htpasswd` file (not included in repo).  
+   Generate it with Docker:
    ```bash
    docker run --rm httpd:alpine htpasswd -nbB myadmin 'MyStrongPass!' > pma-proxy/.htpasswd
    ```
@@ -80,6 +75,8 @@ You will be prompted twice when accessing `http://localhost:8080`:
    In this example:
    - **Username:** `myadmin`  
    - **Password:** `MyStrongPass!`  
+
+   ⚠️ Note: `.htpasswd` is not committed to GitHub for security reasons. Each user must generate their own.
 
 2. **phpMyAdmin Login** – use your MySQL credentials from `.env`:  
    ```
@@ -111,7 +108,7 @@ myapp/
 │    └── requirements.txt
 │── pma-proxy/
 │    ├── nginx.conf
-│    └── .htpasswd
+│    └── .htpasswd   (⚠️ Not included in repo, generate it yourself)
 ```
 
 ---
