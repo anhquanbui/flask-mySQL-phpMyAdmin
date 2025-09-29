@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+  web:
+    build: ./web
+    container_name: flask_app
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_ENV: production
+      MYSQL_HOST: db
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DB: ${MYSQL_DATABASE}
+      APP_USER: ${APP_USER}
+      APP_PASSWORD: ${APP_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8
+    container_name: mysql_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: pma
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db           # chỉ chỉ định host, KHÔNG auto-login
+    expose:
+      - "80"                 # chỉ lộ trong mạng compose, không publish ra ngoài
+    depends_on:
+      db:
+        condition: service_healthy
+
+  pma-proxy:
+    image: nginx:alpine
+    container_name: pma_proxy
+    restart: unless-stopped
+    depends_on:
+      - phpmyadmin
+    ports:
+      - "8080:80"            # người dùng truy cập qua cổng này
+    volumes:
+      - ./pma-proxy/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./pma-proxy/.htpasswd:/etc/nginx/.htpasswd:ro
+
+volumes:
+  db_data:
