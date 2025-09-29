@@ -14,7 +14,7 @@ This project contains a simple web application using **Flask** with a **MySQL** 
 
 Clone the repository:
 ```bash
-git clone https://github.com/anhquanbui/flask-mySQL-phpMyAdmin
+git clone https://github.com/<your-username>/myapp.git
 cd myapp
 ```
 
@@ -43,6 +43,41 @@ docker compose up -d --build
 
 - Flask app → [http://localhost:5000](http://localhost:5000)  
 - phpMyAdmin → [http://localhost:8080](http://localhost:8080)  
+
+---
+
+## 🔑 Login Information
+
+### 1. Flask App (port 5000)
+The Flask app is protected by **HTTP Basic Auth**.  
+Use the credentials from `.env`:  
+- **Username:** `APP_USER`  
+- **Password:** `APP_PASSWORD`  
+
+Default example:
+```
+Username: admin
+Password: superStrongPass123
+```
+
+---
+
+### 2. phpMyAdmin (port 8080)
+phpMyAdmin is behind an **Nginx proxy with Basic Auth**.  
+You will be prompted twice when accessing `http://localhost:8080`:  
+
+1. **Proxy Authentication** – credentials are defined in `pma-proxy/.htpasswd`.  
+   Example:
+   ```
+   Username: proxyuser
+   Password: proxypass
+   ```
+
+2. **phpMyAdmin Login** – use your MySQL credentials from `.env`:  
+   ```
+   Username: appuser
+   Password: AppPass123!
+   ```
 
 ---
 
@@ -75,4 +110,4 @@ myapp/
 
 ## Notes
 - Database data is stored in Docker volume `db_data` so it persists across container restarts.
-- Change `.env` credentials before using in production.
+- Change `.env` credentials and proxy `.htpasswd` before using in production.
